@@ -37,7 +37,7 @@ public class HeartFlyView extends RelativeLayout {
     private int mWidth;
     private int mHeartHeight;
     private int mHeartWidth;
-    private LayoutParams mHeartImageParams;
+
     private Random random = new Random();
 
     public HeartFlyView(Context context) {
@@ -63,9 +63,13 @@ public class HeartFlyView extends RelativeLayout {
 
     private void init() {
         //底部 并且 水平居中
-        mHeartImageParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mHeartImageParams.addRule(CENTER_HORIZONTAL, TRUE);//这里的TRUE 要注意 不是true
-        mHeartImageParams.addRule(ALIGN_PARENT_BOTTOM, TRUE);
+
+    }
+    private LayoutParams createLayoutParams() {
+        LayoutParams heartImageParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        heartImageParams.addRule(CENTER_HORIZONTAL, TRUE);//这里的TRUE 要注意 不是true
+        heartImageParams.addRule(ALIGN_PARENT_BOTTOM, TRUE);
+        return heartImageParams;
     }
 
 
@@ -83,7 +87,7 @@ public class HeartFlyView extends RelativeLayout {
         mHeartHeight = drawable.getIntrinsicHeight();
         mHeartWidth = drawable.getIntrinsicWidth();
         imageView.setImageDrawable(drawable);
-        imageView.setLayoutParams(mHeartImageParams);
+        imageView.setLayoutParams(createLayoutParams());
 
         addView(imageView);
 
@@ -100,14 +104,13 @@ public class HeartFlyView extends RelativeLayout {
 
         AnimatorSet finalSet = new AnimatorSet();
         finalSet.playSequentially(set);
-        finalSet.playSequentially(set, bezierValueAnimator);
+        finalSet.playSequentially(bezierValueAnimator);
         finalSet.setInterpolator(interpolators[random.nextInt(4)]);
         finalSet.setTarget(target);
         return finalSet;
     }
 
     private AnimatorSet getEnterAnimtor(final View target) {
-
         ObjectAnimator alpha = ObjectAnimator.ofFloat(target, View.ALPHA, 0.2f, 1f);
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(target, View.SCALE_X, 0.2f, 1f);
         ObjectAnimator scaleY = ObjectAnimator.ofFloat(target, View.SCALE_Y, 0.2f, 1f);
@@ -125,7 +128,7 @@ public class HeartFlyView extends RelativeLayout {
         BezierEvaluator evaluator = new BezierEvaluator(getPointF(2), getPointF(1));
 
         //这里最好画个图 理解一下 传入了起点 和 终点
-        ValueAnimator animator = ValueAnimator.ofObject(evaluator, new PointF((mWidth - mHeartWidth) / 2, mHeight - mHeartHeight), new PointF(random.nextInt(getWidth()), 0));
+        ValueAnimator animator = ValueAnimator.ofObject(evaluator, new PointF((mWidth - mHeartWidth) / 2, mHeight - mHeartHeight), new PointF(random.nextInt(mWidth), 0));
         animator.addUpdateListener(new BezierListener(target));
         animator.setTarget(target);
         animator.setDuration(3000);
